@@ -1,0 +1,19 @@
+# Executáveis binários
+main
+/tmp
+/bin
+
+# Variáveis de ambiente e segredos
+.env
+*.local
+
+# Logs
+*.log
+
+# Dependências (O Go baixa elas via go.mod)
+vendor/
+
+# IDEs (Opcional, mas recomendado)
+.vscode/
+.idea/
+.DS_Store
