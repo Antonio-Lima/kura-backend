@@ -20,10 +20,12 @@ func CreateCategory(c *gin.Context) {
 	}
 
 	newCategory := model.Category{
-		ID:            123,
+		Base: model.Base{
+			ID:        123,
+			CreatedAt: time.Now(),
+			UpdatedAt: time.Now(),
+		},
 		UserId:        1,
-		CreatedAt:     time.Now(),
-		UpdatedAt:     time.Now(),
 		CategoryInput: input,
 	}
 
