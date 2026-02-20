@@ -1,7 +1,5 @@
 package model
 
-import "time"
-
 type TransactionType string
 
 const (
@@ -17,8 +15,7 @@ type TransactionInput struct {
 }
 
 type Transaction struct {
-	ID        uint      `json:"id"`
-	UserId    uint      `json:"user_id"`
-	CreatedAt time.Time `json:"created_at"`
+	Base
+	UserId uint `json:"user_id"`
 	TransactionInput
 }

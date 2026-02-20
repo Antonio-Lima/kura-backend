@@ -21,9 +21,12 @@ func CreateTransaction(c *gin.Context) {
 	}
 
 	newTransaction := model.Transaction{
-		ID:               123,
+		Base: model.Base{
+			ID:        123,
+			CreatedAt: time.Now(),
+			UpdatedAt: time.Now(),
+		},
 		UserId:           1,
-		CreatedAt:        time.Now(),
 		TransactionInput: input,
 	}
 
