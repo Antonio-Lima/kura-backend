@@ -1,7 +1,7 @@
 package model
 
 type UserBase struct {
-	Email  string `json:"email" binding:"required,email"`
+	Email  string `json:"email" binding:"required,email" gorm:"unique"`
 	Name   string `json:"name" binding:"required,min=3"`
 	Avatar string `json:"avatar" binding:"omitempty,url"`
 }
