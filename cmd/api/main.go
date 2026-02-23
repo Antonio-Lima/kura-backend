@@ -12,12 +12,9 @@ func main() {
 
 	r := gin.Default()
 
-	r.POST("/transactions", handler.CreateTransaction)
+	// r.POST("/transactions", handler.CreateTransaction)
 
-	r.POST("/category", handler.CreateCategory)
-
-	r.POST("/user", handler.CreateUser)
-	r.GET("/user", handler.GetUser)
+	r.POST("/user/register", handler.RegisterUser)
 
 	r.Run(":8080")
 }
