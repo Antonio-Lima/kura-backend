@@ -1,9 +1,13 @@
 package model
 
-import "time"
+import (
+	"time"
+
+	"github.com/google/uuid"
+)
 
 type Base struct {
-	ID        uint      `json:"id" gorm:"primaryKey"`
+	ID        uuid.UUID `json:"id" gorm:"type:uuid;primary_key;default:uuid_generate_v4();not null"`
 	CreatedAt time.Time `json:"created_at" gorm:"autoCreateTime"`
 	UpdatedAt time.Time `json:"updated_at" gorm:"autoUpdateTime"`
 }
