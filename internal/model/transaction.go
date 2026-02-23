@@ -1,5 +1,7 @@
 package model
 
+import "github.com/google/uuid"
+
 type TransactionType string
 
 const (
@@ -16,8 +18,8 @@ type TransactionInput struct {
 
 type Transaction struct {
 	Base
-	UserId   uint     `json:"-"`
-	User     User     `json:"user" gorm:"foreignKey:UserId"`
-	Category Category `json:"-" gorm:"foreignKey:CategoryId"`
+	UserId   uuid.UUID `json:"-"`
+	User     User      `json:"user" gorm:"foreign_key:UserId"`
+	Category Category  `json:"-" gorm:"foreign_key:CategoryId"`
 	TransactionInput
 }
