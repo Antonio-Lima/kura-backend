@@ -1,8 +1,8 @@
 package handler
 
 import (
+	"kura/internal/database"
 	"kura/internal/model"
-	"time"
 
 	"net/http"
 
@@ -10,8 +10,8 @@ import (
 	"golang.org/x/crypto/bcrypt"
 )
 
-func CreateUser(c *gin.Context) {
-	var input model.UserInput
+func RegisterUser(c *gin.Context) {
+	var input model.User
 
 	if err := c.ShouldBindJSON(&input); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{
@@ -22,7 +22,6 @@ func CreateUser(c *gin.Context) {
 	}
 
 	passwordHash, err := bcrypt.GenerateFromPassword([]byte(input.Password), bcrypt.DefaultCost)
-
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{
 			"error":   "Erro ao criptografar a senha",
@@ -30,44 +29,23 @@ func CreateUser(c *gin.Context) {
 		})
 		return
 	}
+	input.Password = string(passwordHash)
 
-	newUser := model.User{
-		Base: model.Base{
-			ID:        1,
-			CreatedAt: time.Now(),
-			UpdatedAt: time.Now(),
-		},
-		UserBase: model.UserBase{
-			Email:  input.Email,
-			Name:   input.Name,
-			Avatar: input.Avatar,
-		},
-		Password: string(passwordHash),
+	if err := database.DB.Create(&input).Error; err != nil {
+		c.JSON(http.StatusConflict, gin.H{
+			"error": "E-mail já cadastrado",
+		})
+		return
 	}
+
+	if err := database.SetupInitialUserData(input.ID); err != nil {
+		println("Erro ao criar categorias padrão")
+	}
+
+	input.Password = ""
 
 	c.JSON(http.StatusCreated, gin.H{
 		"message": "Usuário criado com sucesso",
-		"data":    newUser,
-	})
-}
-
-func GetUser(c *gin.Context) {
-	user := model.User{
-		Base: model.Base{
-			ID:        1,
-			CreatedAt: time.Now(),
-			UpdatedAt: time.Now(),
-		},
-		UserBase: model.UserBase{
-			Email:  "teste@teste.com",
-			Name:   "Teste",
-			Avatar: "https://example.com/avatar.png",
-		},
-		Password: "12345678",
-	}
-
-	c.JSON(http.StatusOK, gin.H{
-		"message": "Usuário encontrado",
-		"data":    user,
+		"data":    input,
 	})
 }
