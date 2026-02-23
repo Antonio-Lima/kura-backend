@@ -5,6 +5,7 @@ import (
 	"time"
 
 	"github.com/gin-gonic/gin"
+	"github.com/google/uuid"
 
 	"kura/internal/model"
 )
@@ -22,11 +23,11 @@ func CreateTransaction(c *gin.Context) {
 
 	newTransaction := model.Transaction{
 		Base: model.Base{
-			ID:        123,
+			ID:        uuid.New(),
 			CreatedAt: time.Now(),
 			UpdatedAt: time.Now(),
 		},
-		UserId:           1,
+		UserId:           uuid.New(),
 		TransactionInput: input,
 	}
 

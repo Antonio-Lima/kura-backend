@@ -6,6 +6,7 @@ import (
 	"time"
 
 	"github.com/gin-gonic/gin"
+	"github.com/google/uuid"
 )
 
 func CreateCategory(c *gin.Context) {
@@ -20,12 +21,10 @@ func CreateCategory(c *gin.Context) {
 	}
 
 	newCategory := model.Category{
-		Base: model.Base{
-			ID:        123,
-			CreatedAt: time.Now(),
-			UpdatedAt: time.Now(),
-		},
-		UserId:        1,
+		ID:            1,
+		CreatedAt:     time.Now(),
+		UpdatedAt:     time.Now(),
+		UserID:        uuid.New(),
 		CategoryInput: input,
 	}
 
