@@ -1,7 +1,7 @@
 package database
 
 import (
-	"kura/internal/model" // Ajuste o caminho
+	"kura/internal/model"
 	"log"
 
 	"gorm.io/driver/postgres"
