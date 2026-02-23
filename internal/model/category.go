@@ -1,5 +1,11 @@
 package model
 
+import (
+	"time"
+
+	"github.com/google/uuid"
+)
+
 type CategoryInput struct {
 	Category string `json:"category" binding:"required"`
 	Color    string `json:"color" binding:"required,hexcolor"`
@@ -7,9 +13,12 @@ type CategoryInput struct {
 }
 
 type Category struct {
-	Base
-	UserId uint `json:"-"`
-	User   User `json:"user" gorm:"foreignKey:UserId"`
+	ID        uint      `json:"id" gorm:"primary_key"`
+	CreatedAt time.Time `json:"created_at" gorm:"autoCreateTime"`
+	UpdatedAt time.Time `json:"updated_at" gorm:"autoUpdateTime"`
+
+	UserID uuid.UUID `json:"-"`
+	User   User      `json:"user" gorm:"foreign_key:UserId"`
 	CategoryInput
 }
 
