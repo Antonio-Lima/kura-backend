@@ -1,6 +1,8 @@
 package handler
 
 import (
+	"fmt"
+	"kura/internal/database"
 	"kura/internal/model"
 	"net/http"
 	"time"
@@ -32,4 +34,45 @@ func CreateCategory(c *gin.Context) {
 		"message": "Categoria cadastrada com sucesso",
 		"data":    newCategory,
 	})
+}
+
+func GetCategories(c *gin.Context) {
+	idStr, exists := c.Get("userID")
+
+	if !exists {
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"error": "Erro ao recuperar usuário",
+		})
+	}
+
+	userID, _ := uuid.Parse(fmt.Sprintf("%v", idStr))
+
+	var categories []model.Category
+
+	if err := database.DB.Where("user_id = ?", userID).Find(&categories).Error; err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"message": "Erro ao buscar categorias",
+			"error":   err.Error(),
+		})
+		return
+	}
+
+	type Response struct {
+		ID       uint   `json:"id"`
+		Category string `json:"category"`
+		Color    string `json:"color"`
+		Icon     string `json:"icon"`
+	}
+
+	var result []Response
+	for _, cat := range categories {
+		result = append(result, Response{
+			ID:       cat.ID,
+			Category: cat.Category,
+			Color:    cat.Color,
+			Icon:     cat.Icon,
+		})
+	}
+
+	c.JSON(http.StatusOK, result)
 }
