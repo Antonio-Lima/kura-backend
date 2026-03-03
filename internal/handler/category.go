@@ -163,3 +163,35 @@ func UpdateCategory(c *gin.Context) {
 		},
 	})
 }
+
+func DeleteCategory(c *gin.Context) {
+	userId := auth.GetUserID(c)
+
+	categoryID, err := strconv.ParseUint(c.Param("id"), 10, 64)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"error": "ID da categoria inválido",
+		})
+		return
+	}
+
+	var category model.Category
+	if err := database.DB.Where("user_id = ? AND id = ?", userId, categoryID).First(&category).Error; err != nil {
+		c.JSON(http.StatusNotFound, gin.H{
+			"error": "Categoria não encontrada",
+		})
+		return
+	}
+
+	if err := database.DB.Delete(&category).Error; err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"error":   "Erro ao deletar categoria",
+			"details": err.Error(),
+		})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{
+		"message": "Categoria deletada com sucesso",
+	})
+}
