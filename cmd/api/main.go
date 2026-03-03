@@ -29,10 +29,13 @@ func main() {
 	protected := r.Group("/")
 	protected.Use(middleware.AuthMiddleware())
 	{
-		protected.GET("/categories", handler.GetCategories)
+		// CATEGORY ROUTES
 		protected.POST("/categories", handler.CreateCategory)
+		protected.GET("/categories", handler.GetCategories)
 		protected.GET("/categories/:id", handler.GetCategoryByID)
 		protected.PUT("/categories/:id", handler.UpdateCategory)
+		protected.DELETE("/categories/:id", handler.DeleteCategory)
+		// CATEGORY ROUTES
 	}
 
 	r.Run(":8080")
