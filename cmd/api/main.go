@@ -32,6 +32,7 @@ func main() {
 		protected.GET("/categories", handler.GetCategories)
 		protected.POST("/categories", handler.CreateCategory)
 		protected.GET("/categories/:id", handler.GetCategoryByID)
+		protected.PUT("/categories/:id", handler.UpdateCategory)
 	}
 
 	r.Run(":8080")
