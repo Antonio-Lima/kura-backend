@@ -1,17 +1,18 @@
 package handler
 
 import (
-	"fmt"
+	"kura/internal/auth"
 	"kura/internal/database"
 	"kura/internal/model"
 	"net/http"
-	"time"
+	"strconv"
 
 	"github.com/gin-gonic/gin"
-	"github.com/google/uuid"
 )
 
 func CreateCategory(c *gin.Context) {
+	userID := auth.GetUserID(c)
+
 	var input model.CategoryInput
 
 	if err := c.ShouldBindBodyWithJSON(&input); err != nil {
@@ -23,29 +24,40 @@ func CreateCategory(c *gin.Context) {
 	}
 
 	newCategory := model.Category{
-		ID:            1,
-		CreatedAt:     time.Now(),
-		UpdatedAt:     time.Now(),
-		UserID:        uuid.New(),
+		UserID:        userID,
 		CategoryInput: input,
 	}
 
-	c.JSON(http.StatusAccepted, gin.H{
+	if err := database.DB.Create(&newCategory).Error; err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"message": "Erro ao cadastrar categoria",
+			"error":   err.Error(),
+		})
+		return
+	}
+
+	type Response struct {
+		ID       uint   `json:"id"`
+		Category string `json:"category"`
+		Color    string `json:"color"`
+		Icon     string `json:"icon"`
+	}
+
+	result := Response{
+		ID:       newCategory.ID,
+		Category: newCategory.Category,
+		Color:    newCategory.Color,
+		Icon:     newCategory.Icon,
+	}
+
+	c.JSON(http.StatusCreated, gin.H{
 		"message": "Categoria cadastrada com sucesso",
-		"data":    newCategory,
+		"data":    result,
 	})
 }
 
 func GetCategories(c *gin.Context) {
-	idStr, exists := c.Get("userID")
-
-	if !exists {
-		c.JSON(http.StatusInternalServerError, gin.H{
-			"error": "Erro ao recuperar usuário",
-		})
-	}
-
-	userID, _ := uuid.Parse(fmt.Sprintf("%v", idStr))
+	userID := auth.GetUserID(c)
 
 	var categories []model.Category
 
@@ -75,4 +87,45 @@ func GetCategories(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, result)
+}
+
+func GetCategoryByID(c *gin.Context) {
+	userID := auth.GetUserID(c)
+
+	categoryID, errID := strconv.ParseUint(c.Param("id"), 10, 64)
+
+	if errID != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"error": "ID da categoria inválido",
+		})
+		return
+	}
+
+	var category model.Category
+
+	if err := database.DB.Where("user_id = ? AND id = ?", userID, categoryID).First(&category).Error; err != nil {
+		c.JSON(http.StatusNotFound, gin.H{
+			"error": "Categoria não encontrada",
+		})
+		return
+	}
+
+	type Response struct {
+		ID       uint   `json:"id"`
+		Category string `json:"category"`
+		Color    string `json:"color"`
+		Icon     string `json:"icon"`
+	}
+
+	result := Response{
+		ID:       category.ID,
+		Category: category.Category,
+		Color:    category.Color,
+		Icon:     category.Icon,
+	}
+
+	c.JSON(http.StatusOK, gin.H{
+		"message": "Categoria encontrada com sucesso",
+		"data":    result,
+	})
 }
