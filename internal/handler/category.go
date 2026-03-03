@@ -175,18 +175,18 @@ func DeleteCategory(c *gin.Context) {
 		return
 	}
 
-	var category model.Category
-	if err := database.DB.Where("user_id = ? AND id = ?", userId, categoryID).First(&category).Error; err != nil {
-		c.JSON(http.StatusNotFound, gin.H{
-			"error": "Categoria não encontrada",
+	result := database.DB.Where("user_id = ? AND id = ?", userId, categoryID).Delete(&model.Category{})
+
+	if result.Error != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"message": "Erro ao deletar categoria",
 		})
 		return
 	}
 
-	if err := database.DB.Delete(&category).Error; err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{
-			"error":   "Erro ao deletar categoria",
-			"details": err.Error(),
+	if result.RowsAffected == 0 {
+		c.JSON(http.StatusNotFound, gin.H{
+			"message": "Categoria não encontrada",
 		})
 		return
 	}
