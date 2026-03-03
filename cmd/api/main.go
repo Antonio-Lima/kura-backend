@@ -30,6 +30,8 @@ func main() {
 	protected.Use(middleware.AuthMiddleware())
 	{
 		protected.GET("/categories", handler.GetCategories)
+		protected.POST("/categories", handler.CreateCategory)
+		protected.GET("/categories/:id", handler.GetCategoryByID)
 	}
 
 	r.Run(":8080")
