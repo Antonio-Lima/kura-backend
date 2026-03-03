@@ -10,52 +10,6 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-func CreateCategory(c *gin.Context) {
-	userID := auth.GetUserID(c)
-
-	var input model.CategoryInput
-
-	if err := c.ShouldBindBodyWithJSON(&input); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{
-			"error":   "Dados inválidos",
-			"details": err.Error(),
-		})
-		return
-	}
-
-	newCategory := model.Category{
-		UserID:        userID,
-		CategoryInput: input,
-	}
-
-	if err := database.DB.Create(&newCategory).Error; err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{
-			"message": "Erro ao cadastrar categoria",
-			"error":   err.Error(),
-		})
-		return
-	}
-
-	type Response struct {
-		ID       uint   `json:"id"`
-		Category string `json:"category"`
-		Color    string `json:"color"`
-		Icon     string `json:"icon"`
-	}
-
-	result := Response{
-		ID:       newCategory.ID,
-		Category: newCategory.Category,
-		Color:    newCategory.Color,
-		Icon:     newCategory.Icon,
-	}
-
-	c.JSON(http.StatusCreated, gin.H{
-		"message": "Categoria cadastrada com sucesso",
-		"data":    result,
-	})
-}
-
 func GetCategories(c *gin.Context) {
 	userID := auth.GetUserID(c)
 
@@ -126,6 +80,52 @@ func GetCategoryByID(c *gin.Context) {
 
 	c.JSON(http.StatusOK, gin.H{
 		"message": "Categoria encontrada com sucesso",
+		"data":    result,
+	})
+}
+
+func CreateCategory(c *gin.Context) {
+	userID := auth.GetUserID(c)
+
+	var input model.CategoryInput
+
+	if err := c.ShouldBindBodyWithJSON(&input); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"error":   "Dados inválidos",
+			"details": err.Error(),
+		})
+		return
+	}
+
+	newCategory := model.Category{
+		UserID:        userID,
+		CategoryInput: input,
+	}
+
+	if err := database.DB.Create(&newCategory).Error; err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"message": "Erro ao cadastrar categoria",
+			"error":   err.Error(),
+		})
+		return
+	}
+
+	type Response struct {
+		ID       uint   `json:"id"`
+		Category string `json:"category"`
+		Color    string `json:"color"`
+		Icon     string `json:"icon"`
+	}
+
+	result := Response{
+		ID:       newCategory.ID,
+		Category: newCategory.Category,
+		Color:    newCategory.Color,
+		Icon:     newCategory.Icon,
+	}
+
+	c.JSON(http.StatusCreated, gin.H{
+		"message": "Categoria cadastrada com sucesso",
 		"data":    result,
 	})
 }
