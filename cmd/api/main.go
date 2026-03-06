@@ -36,6 +36,10 @@ func main() {
 		protected.PUT("/categories/:id", handler.UpdateCategory)
 		protected.DELETE("/categories/:id", handler.DeleteCategory)
 		// CATEGORY ROUTES
+
+		// TRANSACTION ROUTES
+		protected.POST("/transactions", handler.CreateTransaction)
+		// TRANSACTION ROUTES
 	}
 
 	r.Run(":8080")
