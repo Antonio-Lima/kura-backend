@@ -22,8 +22,10 @@ func GenerateToken(userID uuid.UUID) (string, error) {
 
 	claims := CustomClaims{
 		RegisteredClaims: jwt.RegisteredClaims{
-			Subject:   userID.String(),
-			ExpiresAt: jwt.NewNumericDate(time.Now().Add(time.Hour * 24)),
+			Subject: userID.String(),
+			// ExpiresAt: jwt.NewNumericDate(time.Now().Add(time.Hour * 24)),
+			// Voltar para 24 horas, ao subir para produção.
+			ExpiresAt: jwt.NewNumericDate(time.Now().AddDate(1, 0, 0)),
 			IssuedAt:  jwt.NewNumericDate(time.Now()),
 		},
 	}
