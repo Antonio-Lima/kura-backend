@@ -39,6 +39,8 @@ func main() {
 
 		// TRANSACTION ROUTES
 		protected.POST("/transactions", handler.CreateTransaction)
+		protected.PUT("/transactions/:id", handler.UpdateTransaction)
+		protected.DELETE("/transactions/:id", handler.DeleteTransaction)
 		// TRANSACTION ROUTES
 	}
 
