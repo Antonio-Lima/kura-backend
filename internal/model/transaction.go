@@ -1,6 +1,10 @@
 package model
 
-import "github.com/google/uuid"
+import (
+	"time"
+
+	"github.com/google/uuid"
+)
 
 type TransactionType string
 
@@ -14,6 +18,7 @@ type TransactionInput struct {
 	Description string          `json:"description" binding:"required,max=100"`
 	CategoryId  uint            `json:"category_id" binding:"required"`
 	Type        TransactionType `json:"type" binding:"required,oneof=income expense"`
+	Date        time.Time       `json:"date" binding:"required"`
 }
 
 type Transaction struct {
